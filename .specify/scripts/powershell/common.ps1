@@ -157,6 +157,18 @@ function Test-FeatureBranch {
     $hasMalformedTimestamp = ($Branch -match '^[0-9]{7}-[0-9]{6}-') -or ($Branch -match '^(?:\d{7}|\d{8})-\d{6}$')
     $isSequential = ($Branch -match '^[0-9]{3,}-') -and (-not $hasMalformedTimestamp)
     if (-not $isSequential -and $Branch -notmatch '^\d{8}-\d{6}-') {
+        $repoRoot = Get-RepoRoot
+        $featureJson = Join-Path $repoRoot '.specify/feature.json'
+        if (Test-Path -LiteralPath $featureJson -PathType Leaf) {
+            try {
+                $featureConfig = Get-Content -LiteralPath $featureJson -Raw | ConvertFrom-Json
+                if ($featureConfig.feature_directory) {
+                    return $true
+                }
+            } catch {
+                # Fall through to the standard branch validation error.
+            }
+        }
         [Console]::Error.WriteLine("ERROR: Not on a feature branch. Current branch: $raw")
         [Console]::Error.WriteLine("Feature branches should be named like: 001-feature-name, 1234-feature-name, or 20260319-143022-feature-name")
         return $false

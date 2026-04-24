@@ -1,4 +1,5 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
-shell commands, and other important information, read the current plan
+contracts, data model, and delivery constraints, read
+`specs/001-taskora-marketplace/plan.md`.
 <!-- SPECKIT END -->

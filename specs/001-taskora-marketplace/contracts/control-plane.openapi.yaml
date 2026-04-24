@@ -1,0 +1,420 @@
+openapi: 3.1.0
+info:
+  title: Taskora Control Plane API
+  version: 0.1.0
+  description: Lightweight Next.js control-plane endpoints for job intake, workforce registration, and payment reads.
+servers:
+  - url: https://taskora.example.com
+security:
+  - bearerAuth: []
+paths:
+  /api/jobs:
+    post:
+      summary: Create a paid job and run deterministic classification
+      operationId: createJob
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobCreateRequest'
+      responses:
+        '201':
+          description: Job created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobDetail'
+    get:
+      summary: List jobs visible to the authenticated user
+      operationId: listJobs
+      responses:
+        '200':
+          description: Jobs visible under RLS or server-side access rules
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/JobSummary'
+  /api/jobs/{jobId}:
+    get:
+      summary: Read a single job and its visible execution context
+      operationId: getJob
+      parameters:
+        - $ref: '#/components/parameters/JobId'
+      responses:
+        '200':
+          description: Job detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobDetail'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/workforces:
+    post:
+      summary: Create or import a workforce
+      operationId: createWorkforce
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkforceCreateRequest'
+      responses:
+        '201':
+          description: Workforce created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkforceDetail'
+    get:
+      summary: List workforces visible in the current context
+      operationId: listWorkforces
+      responses:
+        '200':
+          description: Workforce list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/WorkforceSummary'
+  /api/workforces/{workforceId}:
+    get:
+      summary: Read a single workforce
+      operationId: getWorkforce
+      parameters:
+        - $ref: '#/components/parameters/WorkforceId'
+      responses:
+        '200':
+          description: Workforce detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkforceDetail'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/workforces/{workforceId}/register:
+    post:
+      summary: Validate or re-register a workforce manifest and connectivity state
+      operationId: registerWorkforce
+      parameters:
+        - $ref: '#/components/parameters/WorkforceId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                forceCompatibilityCheck:
+                  type: boolean
+      responses:
+        '202':
+          description: Registration or compatibility check started
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  workforceId:
+                    type: string
+                    format: uuid
+                  status:
+                    type: string
+                  compatibilityStatus:
+                    type: string
+  /api/payments/authorize:
+    post:
+      summary: Authorize or escrow payment for a job
+      operationId: authorizePayment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentAuthorizeRequest'
+      responses:
+        '200':
+          description: Payment authorization result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentDetail'
+  /api/payments/{paymentId}:
+    get:
+      summary: Read payment and settlement status
+      operationId: getPayment
+      parameters:
+        - $ref: '#/components/parameters/PaymentId'
+      responses:
+        '200':
+          description: Payment detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentDetail'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    JobId:
+      name: jobId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    WorkforceId:
+      name: workforceId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    PaymentId:
+      name: paymentId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  responses:
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  schemas:
+    JobCreateRequest:
+      type: object
+      required:
+        - description
+        - budget
+      properties:
+        description:
+          type: string
+        budget:
+          type: object
+          required:
+            - amount
+            - currency
+          properties:
+            amount:
+              type: number
+            currency:
+              type: string
+        preferredWorkforceId:
+          type: string
+          format: uuid
+        attachments:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              url:
+                type: string
+                format: uri
+    WorkforceCreateRequest:
+      type: object
+      required:
+        - deploymentMode
+        - manifest
+      properties:
+        deploymentMode:
+          type: string
+          enum: [self_hosted, taskora_hosted]
+        manifest:
+          type: object
+        manifestUrl:
+          type: string
+          format: uri
+        publicEndpoint:
+          type: string
+          format: uri
+    PaymentAuthorizeRequest:
+      type: object
+      required:
+        - jobId
+      properties:
+        jobId:
+          type: string
+          format: uuid
+        paymentMethod:
+          type: string
+        amountOverride:
+          type: number
+    JobSummary:
+      type: object
+      required:
+        - id
+        - status
+        - description
+      properties:
+        id:
+          type: string
+          format: uuid
+        description:
+          type: string
+        status:
+          type: string
+        selectedWorkforce:
+          $ref: '#/components/schemas/WorkforceSummary'
+        settlementStatus:
+          type: string
+    JobDetail:
+      allOf:
+        - $ref: '#/components/schemas/JobSummary'
+        - type: object
+          properties:
+            classification:
+              type: object
+              properties:
+                category:
+                  type: string
+                jobType:
+                  type: string
+                riskLevel:
+                  type: string
+                requiredCapabilities:
+                  type: array
+                  items:
+                    type: string
+            matches:
+              type: array
+              items:
+                $ref: '#/components/schemas/WorkforceMatch'
+            trace:
+              type: array
+              items:
+                $ref: '#/components/schemas/TraceEvent'
+            payment:
+              $ref: '#/components/schemas/PaymentDetail'
+    WorkforceSummary:
+      type: object
+      required:
+        - id
+        - name
+        - category
+        - deploymentMode
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        category:
+          type: string
+        deploymentMode:
+          type: string
+          enum: [self_hosted, taskora_hosted]
+        availabilityStatus:
+          type: string
+        estimatedDeliveryTime:
+          type: string
+        reputation:
+          type: object
+    WorkforceDetail:
+      allOf:
+        - $ref: '#/components/schemas/WorkforceSummary'
+        - type: object
+          properties:
+            description:
+              type: string
+            acceptedJobTypes:
+              type: array
+              items:
+                type: string
+            rejectedJobTypes:
+              type: array
+              items:
+                type: string
+            approvalPolicy:
+              type: object
+            pricingModel:
+              type: object
+            payoutAddress:
+              type: string
+            connectionStatus:
+              type: object
+    WorkforceMatch:
+      type: object
+      properties:
+        workforce:
+          $ref: '#/components/schemas/WorkforceSummary'
+        specializationFitScore:
+          type: number
+        priceScore:
+          type: number
+        availabilityScore:
+          type: number
+        rankingReason:
+          type: string
+    TraceEvent:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        eventType:
+          type: string
+        title:
+          type: string
+        status:
+          type: string
+        roleName:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        integrationReference:
+          type: object
+    PaymentDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        authorizationStatus:
+          type: string
+        settlementStatus:
+          type: string
+        payoutStatus:
+          type: string
+        totalAmount:
+          type: number
+        taskoraFee:
+          type: number
+        hostingFee:
+          type: number
+        developerPayout:
+          type: number
+        references:
+          type: array
+          items:
+            type: object
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+        message:
+          type: string

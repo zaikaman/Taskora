@@ -1,0 +1,265 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://taskora.example.com/contracts/workforce-manifest.schema.json",
+  "title": "Taskora Workforce Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "name",
+    "category",
+    "description",
+    "acceptedJobTypes",
+    "rejectedJobTypes",
+    "deploymentMode",
+    "roles",
+    "roleGraphEdges",
+    "approvalPolicy",
+    "tools",
+    "pricingModel",
+    "payoutAddress",
+    "exampleJobs",
+    "availabilityStatus"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 3
+    },
+    "category": {
+      "type": "string",
+      "minLength": 2
+    },
+    "description": {
+      "type": "string",
+      "minLength": 10
+    },
+    "acceptedJobTypes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "rejectedJobTypes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "deploymentMode": {
+      "type": "string",
+      "enum": ["self_hosted", "taskora_hosted"]
+    },
+    "publicEndpoint": {
+      "type": "string",
+      "format": "uri"
+    },
+    "manifestUrl": {
+      "type": "string",
+      "format": "uri"
+    },
+    "roles": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/role"
+      }
+    },
+    "roleGraphEdges": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/roleGraphEdge"
+      }
+    },
+    "approvalPolicy": {
+      "$ref": "#/$defs/approvalPolicy"
+    },
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "pricingModel": {
+      "$ref": "#/$defs/pricingModel"
+    },
+    "payoutAddress": {
+      "type": "string",
+      "minLength": 3
+    },
+    "exampleJobs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "availabilityStatus": {
+      "type": "string",
+      "enum": ["draft", "connected", "available", "paused", "unavailable"]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "deploymentMode": {
+            "const": "self_hosted"
+          }
+        }
+      },
+      "then": {
+        "anyOf": [
+          {
+            "required": ["publicEndpoint"]
+          },
+          {
+            "required": ["manifestUrl"]
+          }
+        ]
+      }
+    }
+  ],
+  "$defs": {
+    "role": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "name",
+        "purpose",
+        "permissions",
+        "tools",
+        "inputExpectations",
+        "outputExpectations"
+      ],
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "purpose": {
+          "type": "string"
+        },
+        "prompt": {
+          "type": "string"
+        },
+        "skillFile": {
+          "type": "string"
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "canClassify",
+              "canPlan",
+              "canBuildArtifact",
+              "canReview",
+              "canApprove",
+              "canExecuteOnchain",
+              "canReleasePayment",
+              "canWriteMemory"
+            ]
+          }
+        },
+        "tools": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "inputExpectations": {
+          "type": "object"
+        },
+        "outputExpectations": {
+          "type": "object"
+        }
+      },
+      "oneOf": [
+        {
+          "required": ["prompt"]
+        },
+        {
+          "required": ["skillFile"]
+        }
+      ]
+    },
+    "roleGraphEdge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["from", "to", "type"],
+      "properties": {
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "depends_on",
+            "review_gate",
+            "approval_gate",
+            "success_terminal",
+            "failure_terminal"
+          ]
+        },
+        "condition": {
+          "type": "object"
+        }
+      }
+    },
+    "approvalPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode"],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "none",
+            "reviewer_required",
+            "auditor_required",
+            "human_required",
+            "multi_reviewer_required"
+          ]
+        },
+        "minimumApprovals": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "executionRequiresIndependentApprover": {
+          "type": "boolean"
+        }
+      }
+    },
+    "pricingModel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode"],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["fixed", "starting_at", "hourly", "quote_required"]
+        },
+        "amount": {
+          "type": "number"
+        },
+        "currency": {
+          "type": "string"
+        },
+        "hostingFeeMode": {
+          "type": "string",
+          "enum": ["none", "flat", "percentage"]
+        },
+        "hostingFeeValue": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}
