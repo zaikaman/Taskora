@@ -90,6 +90,17 @@
 - **FR-004**: System MUST [data requirement, e.g., "persist user preferences"]
 - **FR-005**: System MUST [behavior, e.g., "log all security events"]
 
+### Quality, UX, and Performance Requirements *(mandatory)*
+
+- **QR-001**: Code quality expectations MUST be explicit (linting, formatting, static
+  analysis, and review criteria).
+- **QR-002**: Required automated test levels MUST be explicit (unit, integration,
+  contract/end-to-end as applicable).
+- **QR-003**: UX consistency expectations MUST be explicit, including applicable loading,
+  empty, error, and success states and accessibility constraints.
+- **QR-004**: Performance budgets MUST be explicit with measurable targets (for example,
+  latency, throughput, and resource usage).
+
 *Example of marking unclear requirements:*
 
 - **FR-006**: System MUST authenticate users via [NEEDS CLARIFICATION: auth method not specified - email/password, SSO, OAuth?]
@@ -113,6 +124,11 @@
 - **SC-002**: [Measurable metric, e.g., "System handles 1000 concurrent users without degradation"]
 - **SC-003**: [User satisfaction metric, e.g., "90% of users successfully complete primary task on first attempt"]
 - **SC-004**: [Business metric, e.g., "Reduce support tickets related to [X] by 50%"]
+
+**Minimum coverage for this section**:
+- At least one measurable outcome for test reliability/coverage.
+- At least one measurable outcome for UX consistency or accessibility.
+- At least one measurable outcome for performance budget adherence.
 
 ## Assumptions
 
