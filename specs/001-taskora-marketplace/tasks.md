@@ -35,25 +35,25 @@
 
 **CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T010 Create the Supabase project structure and local configuration in `supabase/config.toml` and `supabase/seed.sql`
-- [ ] T011 Create the initial Supabase schema migration for core tables in `supabase/migrations/202604250001_taskora_core.sql`
-- [ ] T012 [P] Implement generated-type entry points and typed table exports in `packages/supabase/src/types/database.ts` and `packages/supabase/src/types/index.ts`
-- [ ] T013 [P] Implement server-side and browser-safe Supabase clients in `packages/supabase/src/clients/server.ts`, `packages/supabase/src/clients/browser.ts`, and `packages/supabase/src/clients/service-role.ts`
-- [ ] T014 [P] Implement shared environment parsing and secrets guards in `packages/core/src/config/env.ts` and `apps/agent-runtime/src/config/env.ts`
-- [ ] T015 [P] Implement root domain enums and shared Zod primitives in `packages/core/src/domain/enums.ts`, `packages/core/src/domain/ids.ts`, and `packages/core/src/domain/common.ts`
-- [ ] T016 Implement manifest, job, payment, settlement, and trace schemas in `packages/core/src/domain/schemas.ts`
-- [ ] T017 Implement shared domain DTOs and mappers in `packages/core/src/domain/models.ts` and `packages/core/src/domain/mappers.ts`
-- [ ] T018 [P] Implement workforce manifest validation and template helpers in `packages/agent-sdk/src/manifests/schema.ts`, `packages/agent-sdk/src/manifests/templates.ts`, and `packages/agent-sdk/src/manifests/index.ts`
-- [ ] T019 [P] Implement role graph, permission policy, and approval gate logic in `packages/agent-sdk/src/role-graph/executor-plan.ts`, `packages/agent-sdk/src/permissions/policies.ts`, and `packages/agent-sdk/src/tracing/events.ts`
-- [ ] T020 [P] Implement provider adapter interfaces in `packages/og/src/contracts/og-adapter.ts`, `packages/gensyn/src/contracts/gensyn-adapter.ts`, and `packages/keeperhub/src/contracts/keeperhub-adapter.ts`
-- [ ] T021 [P] Implement mock provider adapters in `packages/og/src/mock/mock-og-adapter.ts`, `packages/gensyn/src/mock/mock-gensyn-adapter.ts`, and `packages/keeperhub/src/mock/mock-keeperhub-adapter.ts`
-- [ ] T022 [P] Implement runtime integration factory wiring in `apps/agent-runtime/src/integrations/factory.ts`
-- [ ] T023 Implement shared auth, profile, and RLS-aware repository helpers in `packages/supabase/src/helpers/profiles.ts`, `packages/supabase/src/helpers/jobs.ts`, and `packages/supabase/src/helpers/workforces.ts`
+- [x] T010 Create the Supabase project structure and local configuration in `supabase/config.toml` and `supabase/seed.sql`
+- [x] T011 Create the initial Supabase schema migration for core tables in `supabase/migrations/202604250001_taskora_core.sql`
+- [x] T012 [P] Implement generated-type entry points and typed table exports in `packages/supabase/src/types/database.ts` and `packages/supabase/src/types/index.ts`
+- [x] T013 [P] Implement server-side and browser-safe Supabase clients in `packages/supabase/src/clients/server.ts`, `packages/supabase/src/clients/browser.ts`, and `packages/supabase/src/clients/service-role.ts`
+- [x] T014 [P] Implement shared environment parsing and secrets guards in `packages/core/src/config/env.ts` and `apps/agent-runtime/src/config/env.ts`
+- [x] T015 [P] Implement root domain enums and shared Zod primitives in `packages/core/src/domain/enums.ts`, `packages/core/src/domain/ids.ts`, and `packages/core/src/domain/common.ts`
+- [x] T016 Implement manifest, job, payment, settlement, and trace schemas in `packages/core/src/domain/schemas.ts`
+- [x] T017 Implement shared domain DTOs and mappers in `packages/core/src/domain/models.ts` and `packages/core/src/domain/mappers.ts`
+- [x] T018 [P] Implement workforce manifest validation and template helpers in `packages/agent-sdk/src/manifests/schema.ts`, `packages/agent-sdk/src/manifests/templates.ts`, and `packages/agent-sdk/src/manifests/index.ts`
+- [x] T019 [P] Implement role graph, permission policy, and approval gate logic in `packages/agent-sdk/src/role-graph/executor-plan.ts`, `packages/agent-sdk/src/permissions/policies.ts`, and `packages/agent-sdk/src/tracing/events.ts`
+- [x] T020 [P] Implement provider adapter interfaces in `packages/og/src/contracts/og-adapter.ts`, `packages/gensyn/src/contracts/gensyn-adapter.ts`, and `packages/keeperhub/src/contracts/keeperhub-adapter.ts`
+- [x] T021 [P] Implement mock provider adapters in `packages/og/src/mock/mock-og-adapter.ts`, `packages/gensyn/src/mock/mock-gensyn-adapter.ts`, and `packages/keeperhub/src/mock/mock-keeperhub-adapter.ts`
+- [x] T022 [P] Implement runtime integration factory wiring in `apps/agent-runtime/src/integrations/factory.ts`
+- [x] T023 Implement shared auth, profile, and RLS-aware repository helpers in `packages/supabase/src/helpers/profiles.ts`, `packages/supabase/src/helpers/jobs.ts`, and `packages/supabase/src/helpers/workforces.ts`
 - [ ] T024 [P] Implement shared UI shell, navigation, and state components in `packages/ui/src/components/app-shell.tsx`, `packages/ui/src/components/page-state.tsx`, and `packages/ui/src/components/navigation.tsx`
 - [ ] T025 [P] Implement web app auth bootstrap and route guards in `apps/web/lib/auth.ts`, `apps/web/middleware.ts`, and `apps/web/app/(app)/layout.tsx`
-- [ ] T026 [P] Configure shared logging, error serialization, and request tracing in `packages/core/src/observability/logger.ts`, `packages/core/src/observability/errors.ts`, and `apps/agent-runtime/src/services/request-context.ts`
-- [ ] T027 [P] Create foundational unit coverage for schemas, adapters, and permissions in `tests/unit/core-schemas.test.ts`, `tests/unit/provider-adapters.test.ts`, and `tests/unit/role-permissions.test.ts`
-- [ ] T028 [P] Create migration and repository integration coverage in `tests/integration/supabase-schema.test.ts` and `tests/integration/supabase-helpers.test.ts`
+- [x] T026 [P] Configure shared logging, error serialization, and request tracing in `packages/core/src/observability/logger.ts`, `packages/core/src/observability/errors.ts`, and `apps/agent-runtime/src/services/request-context.ts`
+- [x] T027 [P] Create foundational unit coverage for schemas, adapters, and permissions in `tests/unit/core-schemas.test.ts`, `tests/unit/provider-adapters.test.ts`, and `tests/unit/role-permissions.test.ts`
+- [x] T028 [P] Create migration and repository integration coverage in `tests/integration/supabase-schema.test.ts` and `tests/integration/supabase-helpers.test.ts`
 - [ ] T029 Define the shared UX state checklist and performance assertions in `apps/web/lib/ux-criteria.ts` and `tests/integration/performance-budgets.test.ts`
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel

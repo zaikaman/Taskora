@@ -1,0 +1,2 @@
+-- Phase 2 foundational seed intentionally keeps data minimal.
+-- Demo marketplace records are added in Phase 7.

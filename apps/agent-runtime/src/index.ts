@@ -1,20 +1,42 @@
 import Fastify from "fastify";
 import { pathToFileURL } from "node:url";
+import { createLogger, serializeError } from "@taskora/core";
+import { parseRuntimeEnv } from "./config/env.js";
+import { createRuntimeIntegrations } from "./integrations/factory.js";
+import { registerRequestContext } from "./services/request-context.js";
 
 export function buildRuntimeServer() {
+  const env = parseRuntimeEnv();
+  const logger = createLogger({ service: "agent-runtime" });
+  const integrations = createRuntimeIntegrations(env);
   const app = Fastify({
     logger: true
   });
 
-  app.get("/runtime/health", () => ({
-    status: "ok",
-    version: process.env.npm_package_version ?? "0.1.0",
-    adapters: {
-      og: process.env.OG_MODE ?? "mock",
-      gensyn: process.env.GENSYN_MODE ?? "mock",
-      keeperhub: process.env.KEEPERHUB_MODE ?? "mock"
-    }
-  }));
+  registerRequestContext(app, logger);
+
+  app.setErrorHandler((error, _request, reply) => {
+    const serialized = serializeError(error);
+    reply.status(serialized.statusCode).send(serialized);
+  });
+
+  app.get("/runtime/health", async () => {
+    const [og, gensyn, keeperhub] = await Promise.all([
+      integrations.og.healthCheck(),
+      integrations.gensyn.healthCheck(),
+      integrations.keeperhub.healthCheck()
+    ]);
+
+    return {
+      status: "ok",
+      version: process.env.npm_package_version ?? "0.1.0",
+      adapters: {
+        og,
+        gensyn,
+        keeperhub
+      }
+    };
+  });
 
   return app;
 }
