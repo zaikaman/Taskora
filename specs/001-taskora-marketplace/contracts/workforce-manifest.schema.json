@@ -11,6 +11,7 @@
     "acceptedJobTypes",
     "rejectedJobTypes",
     "deploymentMode",
+    "executionBackend",
     "roles",
     "roleGraphEdges",
     "approvalPolicy",
@@ -18,7 +19,8 @@
     "pricingModel",
     "payoutAddress",
     "exampleJobs",
-    "availabilityStatus"
+    "availabilityStatus",
+    "integrations"
   ],
   "properties": {
     "name": {
@@ -49,6 +51,10 @@
     "deploymentMode": {
       "type": "string",
       "enum": ["self_hosted", "taskora_hosted"]
+    },
+    "executionBackend": {
+      "type": "string",
+      "enum": ["local_runtime", "gensyn", "self_hosted_endpoint", "hybrid"]
     },
     "publicEndpoint": {
       "type": "string",
@@ -97,6 +103,9 @@
     "availabilityStatus": {
       "type": "string",
       "enum": ["draft", "connected", "available", "paused", "unavailable"]
+    },
+    "integrations": {
+      "$ref": "#/$defs/integrations"
     }
   },
   "allOf": [
@@ -131,7 +140,8 @@
         "permissions",
         "tools",
         "inputExpectations",
-        "outputExpectations"
+        "outputExpectations",
+        "executionMode"
       ],
       "properties": {
         "key": {
@@ -176,6 +186,10 @@
         },
         "outputExpectations": {
           "type": "object"
+        },
+        "executionMode": {
+          "type": "string",
+          "enum": ["local", "gensyn_eligible", "keeperhub_only", "self_hosted"]
         }
       },
       "oneOf": [
@@ -258,6 +272,69 @@
         },
         "hostingFeeValue": {
           "type": "number"
+        }
+      }
+    },
+    "integrations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["og", "gensyn", "keeperhub"],
+      "properties": {
+        "og": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "publishManifest": {
+              "type": "boolean"
+            },
+            "publishTrace": {
+              "type": "boolean"
+            },
+            "publishRoleMemory": {
+              "type": "boolean"
+            },
+            "enableInferenceHooks": {
+              "type": "boolean"
+            }
+          }
+        },
+        "gensyn": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "network": {
+              "type": "string"
+            },
+            "workloadMode": {
+              "type": "string",
+              "enum": ["optional", "preferred", "required"]
+            },
+            "verificationRequired": {
+              "type": "boolean"
+            }
+          }
+        },
+        "keeperhub": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "executionMode": {
+              "type": "string",
+              "enum": ["workflow", "direct_execution", "none"]
+            },
+            "supportedChains": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
         }
       }
     }

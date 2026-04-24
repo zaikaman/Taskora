@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Taskora Control Plane API
-  version: 0.1.0
+  version: 0.2.0
   description: Lightweight Next.js control-plane endpoints for job intake, workforce registration, and payment reads.
 servers:
   - url: https://taskora.example.com
@@ -132,6 +132,8 @@ paths:
                     type: string
                   compatibilityStatus:
                     type: string
+                  integrationChecks:
+                    type: object
   /api/payments/authorize:
     post:
       summary: Authorize or escrow payment for a job
@@ -248,6 +250,15 @@ components:
         publicEndpoint:
           type: string
           format: uri
+        integrationBindings:
+          type: object
+          properties:
+            og:
+              type: object
+            gensyn:
+              type: object
+            keeperhub:
+              type: object
     PaymentAuthorizeRequest:
       type: object
       required:
@@ -306,6 +317,19 @@ components:
                 $ref: '#/components/schemas/TraceEvent'
             payment:
               $ref: '#/components/schemas/PaymentDetail'
+            integrationReferences:
+              type: object
+              properties:
+                ogTrace:
+                  type: string
+                gensynWorkloads:
+                  type: array
+                  items:
+                    type: string
+                keeperhubRuns:
+                  type: array
+                  items:
+                    type: string
     WorkforceSummary:
       type: object
       required:
@@ -324,6 +348,8 @@ components:
         deploymentMode:
           type: string
           enum: [self_hosted, taskora_hosted]
+        executionBackend:
+          type: string
         availabilityStatus:
           type: string
         estimatedDeliveryTime:
@@ -352,6 +378,8 @@ components:
             payoutAddress:
               type: string
             connectionStatus:
+              type: object
+            integrations:
               type: object
     WorkforceMatch:
       type: object

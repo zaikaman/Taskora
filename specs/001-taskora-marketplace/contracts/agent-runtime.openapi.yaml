@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
   title: Taskora Agent Runtime API
-  version: 0.1.0
-  description: Runtime service endpoints for long-running workforce execution and diagnostics.
+  version: 0.2.0
+  description: Runtime service endpoints for long-running workforce execution, delegated compute, and diagnostics.
 servers:
   - url: https://runtime.taskora.example.com
 security:
@@ -56,6 +56,8 @@ paths:
               type: object
               properties:
                 includeCompatibilityCheck:
+                  type: boolean
+                includeProviderChecks:
                   type: boolean
       responses:
         '200':
@@ -136,18 +138,31 @@ components:
           format: uuid
         status:
           type: string
-          enum: [queued, running, awaiting_approval, completed, rejected, failed]
+          enum: [queued, running, awaiting_approval, executing_onchain, completed, rejected, failed]
         currentRole:
           type: string
+        executionBackend:
+          type: string
+          enum: [local_runtime, gensyn, hybrid, self_hosted_endpoint]
         traceEventCount:
           type: integer
         finalResultReference:
           type: string
         ogTraceReference:
           type: string
-        settlementReference:
+        gensynWorkloadReferences:
+          type: array
+          items:
+            type: string
+        gensynVerificationReferences:
+          type: array
+          items:
+            type: string
+        keeperhubWorkflowReference:
           type: string
-        executionReference:
+        keeperhubExecutionReference:
+          type: string
+        settlementReference:
           type: string
     WorkforceTestResult:
       type: object
@@ -158,6 +173,8 @@ components:
         compatible:
           type: boolean
         deploymentMode:
+          type: string
+        executionBackend:
           type: string
         checks:
           type: array

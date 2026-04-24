@@ -5,7 +5,8 @@
 - Supabase Postgres is the operational source of truth for all buyer-visible and developer-visible state.
 - Canonical workforce manifests are stored as validated JSON plus normalized supporting records for query efficiency.
 - Every major job lifecycle change, approval decision, payout event, and external reference is represented explicitly rather than folded into generic metadata.
-- External infrastructure identifiers from 0G, AXL, KeeperHub, and self-hosted endpoints are stored in `integration_references` so the UI can surface them consistently.
+- External infrastructure identifiers from 0G, Gensyn, KeeperHub, and self-hosted endpoints are stored in `integration_references` so the UI can surface them consistently.
+- Taskora-owned records remain authoritative for classification, approvals, job state, payment state, and payout state even when external providers participate in execution.
 
 ## Core Entities
 
@@ -53,6 +54,7 @@
   - `category`
   - `description`
   - `deployment_mode` (`self_hosted`, `taskora_hosted`)
+  - `execution_backend` (`local_runtime`, `gensyn`, `self_hosted_endpoint`, `hybrid`)
   - `availability_status` (`draft`, `connected`, `available`, `paused`, `unavailable`)
   - `pricing_model` JSON
   - `reputation_summary` JSON
@@ -98,6 +100,7 @@
   - `tools` JSONB
   - `input_expectations` JSONB
   - `output_expectations` JSONB
+  - `execution_mode` (`local`, `gensyn_eligible`, `keeperhub_only`, `self_hosted`)
   - `created_at`
   - `updated_at`
 - **Relationships**:
@@ -136,6 +139,7 @@
   - `status`
   - `final_result` JSONB nullable
   - `final_result_summary`
+  - `og_final_trace_ref` nullable
   - `created_at`
   - `updated_at`
   - `completed_at` nullable
@@ -228,6 +232,7 @@
   - `taskora_fee_amount`
   - `hosting_fee_amount`
   - `developer_payout_amount`
+  - `keeperhub_execution_required` boolean
   - `released_at` nullable
   - `created_at`
 - **Relationships**:
@@ -237,7 +242,7 @@
 ### Payout
 
 - **Table**: `payouts`
-- **Purpose**: Tracks the developer’s payout lifecycle.
+- **Purpose**: Tracks the developer payout lifecycle.
 - **Primary fields**:
   - `id` UUID
   - `settlement_id` UUID
@@ -259,11 +264,13 @@
   - `id` UUID
   - `workforce_id` UUID
   - `deployment_mode`
-  - `runtime_target`
+  - `execution_backend`
+  - `compute_provider` (`local_runtime`, `gensyn`, `self_hosted`, `hybrid`)
   - `status` (`draft`, `deploying`, `connected`, `available`, `paused`, `unavailable`, `failed`)
   - `resource_usage` JSONB
   - `config` JSONB
   - `public_endpoint` nullable
+  - `gensyn_node_ref` nullable
   - `last_health_status`
   - `last_health_check_at`
   - `created_at`
@@ -281,7 +288,7 @@
   - `job_id` nullable UUID
   - `workforce_id` nullable UUID
   - `deployment_id` nullable UUID
-  - `reference_type` (`og_manifest`, `og_trace`, `og_memory`, `axl_message`, `keeperhub_settlement`, `keeperhub_execution`, `self_hosted_health_check`)
+  - `reference_type` (`og_manifest`, `og_trace`, `og_memory`, `og_inference`, `gensyn_workload`, `gensyn_verification`, `gensyn_coordination`, `keeperhub_workflow`, `keeperhub_run`, `keeperhub_settlement`, `keeperhub_execution`, `self_hosted_health_check`)
   - `external_id`
   - `uri`
   - `metadata` JSONB
@@ -294,7 +301,7 @@
 - `profiles.id` is the shared identity root for customer-owned jobs and developer-owned workforces.
 - `workforces` is the marketplace listing anchor; `workforce_manifests`, `workforce_roles`, and `role_graph_edges` describe how that workforce behaves.
 - `jobs` is the execution anchor; `job_classifications`, `job_trace_events`, `review_decisions`, `payments`, `settlements`, and `integration_references` capture progression and accountability.
-- `deployments` gives both self-hosted and Taskora-hosted execution a unified operational status surface.
+- `deployments` gives self-hosted, local hosted, and Gensyn-backed execution a unified operational status surface.
 
 ## State Transitions
 
@@ -308,8 +315,11 @@
 - `queued` -> `running`
 - `running` -> `awaiting_approval`
 - `awaiting_approval` -> `running`
+- `running` -> `executing_onchain`
+- `executing_onchain` -> `completed`
 - `running` -> `completed`
 - `running` -> `failed`
+- `executing_onchain` -> `failed`
 - `running` -> `rejected`
 - `authorized` -> `canceled`
 
@@ -340,5 +350,7 @@
 - High-risk jobs must not allow the same role to both build and approve a guarded artifact unless the approval policy explicitly allows it.
 - Reviewer and auditor roles do not imply execution permissions.
 - Onchain execution requires both the relevant approval decision and an authorized payment state.
+- Onchain execution that is delegated to KeeperHub must also create a corresponding `keeperhub_workflow` or `keeperhub_run` integration reference before the job can move to `executing_onchain`.
 - Settlement release requires an approved terminal job state.
 - Every completed job must retain at least one visible final trace event and one `og_trace` integration reference, even when the 0G adapter is mocked.
+- Every Gensyn-delegated role step must preserve a workload or verification reference in `integration_references`, even when the adapter is using a local compatibility mode.

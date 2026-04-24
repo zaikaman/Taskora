@@ -24,9 +24,9 @@
   - Using 0G as the primary application database: rejected because 0G is intended here for verifiable references rather than operational UI reads and writes.
   - Bypassing RLS in favor of only server-mediated reads: rejected because the UI still benefits from secure, policy-backed direct reads and Realtime subscriptions.
 
-## Decision 4: Build the agent runtime as a standalone Node.js service with a future queue seam
+## Decision 4: Build the runtime as a standalone Node.js service with a future queue seam
 
-- **Decision**: Implement `apps/agent-runtime` as a standalone Node.js TypeScript service with an HTTP API for the first version and an orchestration layer whose job intake can later be swapped to Redis, BullMQ, Inngest, Trigger.dev, or another durable queue.
+- **Decision**: Implement `apps/agent-runtime` as a standalone Node.js TypeScript service with an HTTP API for the first version and an orchestration layer whose intake can later be swapped to Redis, BullMQ, Inngest, Trigger.dev, or another durable queue.
 - **Rationale**: The runtime needs to load manifests, execute role graphs, emit trace events, enforce permissions and approvals, and perform retries independently from the web request lifecycle. An explicit intake seam avoids repainting the architecture when durable queueing is introduced later.
 - **Alternatives considered**:
   - Starting with a queue-first architecture immediately: rejected for initial scope because HTTP dispatch is simpler for the first delivery and still preserves the future queue boundary.
@@ -40,23 +40,39 @@
   - Starting with an LLM-based classifier: rejected because it would make early behavior harder to reason about and test.
   - Hardcoding demo-specific routing only: rejected because the platform must remain extensible to multiple workforce categories.
 
-## Decision 6: Make the workforce manifest canonical in Supabase and verifiable in 0G
+## Decision 6: Use 0G for verifiable manifests, memory, and traces
 
-- **Decision**: Validate workforce manifests with Zod, store the canonical manifest JSON and version metadata in Supabase, and publish a verifiable manifest reference to 0G through a dedicated adapter when available.
-- **Rationale**: Supabase needs fast operational reads for matching and runtime startup, while 0G provides the verifiable reference layer required by the product. Keeping both surfaces aligned through one canonical manifest contract avoids divergent representations.
+- **Decision**: Integrate 0G as the verifiable storage and reference layer for published workforce manifests, role memory snapshots, audit logs, and final job traces while keeping Supabase as the operational system of record.
+- **Rationale**: 0G's docs currently position the platform around decentralized storage, inference, and developer-facing storage SDKs, including TypeScript support. That matches Taskora's need for verifiable artifact publication without replacing the operational database.
 - **Alternatives considered**:
-  - Storing only normalized role records: rejected because full manifest replay and verification become harder.
-  - Storing only raw manifest blobs: rejected because the product still needs normalized querying across workforces, roles, and deployment state.
+  - Storing only manifest hashes in Supabase without off-platform publication: rejected because the product explicitly calls for visible verifiable references.
+  - Using 0G as the only state store: rejected because buyer-facing and developer-facing workflows require relational queries, RLS, and low-friction operational reads.
 
-## Decision 7: Route all inter-role communication and external infra through adapters
+## Decision 7: Treat Gensyn as decentralized compute and verification, not a simple transport adapter
 
-- **Decision**: Define stable interfaces in `packages/axl`, `packages/og`, and `packages/keeperhub`, ship mock implementations first, and force both the runtime and any future self-hosted integration flows to call those adapters rather than infrastructure-specific clients directly.
-- **Rationale**: The product depends on sponsor infrastructure, but the first version cannot depend on all real integrations being production-ready. Adapter boundaries let the flow stay real while specific providers remain mockable and replaceable.
+- **Decision**: Replace the earlier transport-only concept with a `packages/gensyn` integration that represents delegated compute, verification, peer coordination, and workload references for eligible hosted role steps.
+- **Rationale**: Gensyn's docs describe four core layers: execution, trustless verification, peer-to-peer communication, and decentralized coordination. That makes it a better conceptual fit for delegated compute and verified workload execution than for simple message passing. The runtime should decide which role steps stay local and which are submitted through the Gensyn adapter.
 - **Alternatives considered**:
-  - Calling provider SDKs directly from the runtime: rejected because it would couple orchestration logic to vendor details and make testing harder.
-  - Stubbing everything at the UI layer only: rejected because runtime and settlement behavior still need integration-shaped execution paths.
+  - Modeling Gensyn as only an inter-agent message bus: rejected because it underuses the protocol's documented compute and verification role.
+  - Requiring all role steps to execute on Gensyn immediately: rejected because the public docs currently note that there are no official swarms running, so Taskora needs a local fallback to stay shippable.
 
-## Decision 8: Use Supabase Realtime for trace updates with a polling fallback
+## Decision 8: Use KeeperHub for approved onchain execution and workflow reliability
+
+- **Decision**: Integrate KeeperHub as the execution and reliability layer for approved onchain actions, including workflow creation or direct execution requests after Taskora's approval policy succeeds.
+- **Rationale**: KeeperHub's docs and site position it as an execution layer for onchain agents with REST, MCP, and CLI surfaces, managed workflows, retries, gas estimation, transaction ordering, and wallet security. That maps directly to Taskora's need to hand off approved onchain work rather than reimplement transaction reliability itself.
+- **Alternatives considered**:
+  - Building raw transaction execution inside Taskora: rejected because it would duplicate execution infrastructure and weaken operational reliability.
+  - Treating KeeperHub as the primary product database: rejected because Taskora still needs its own payment, settlement, and trace records in Supabase.
+
+## Decision 9: Keep financial state in Taskora even when using KeeperHub
+
+- **Decision**: Persist `payments`, `settlements`, `payouts`, and user-visible fee breakdowns in Supabase even when KeeperHub executes the onchain side of settlement or action approval.
+- **Rationale**: KeeperHub focuses on reliable execution. Taskora still needs a stable marketplace ledger and UI state model that remains coherent regardless of provider delays, retries, or provider outages.
+- **Alternatives considered**:
+  - Treating KeeperHub run history as the only settlement record: rejected because the marketplace must expose buyer-facing and developer-facing payment status in its own domain model.
+  - Deferring settlement modeling until real payments are integrated: rejected because settlement transparency is already a core product requirement.
+
+## Decision 10: Use Supabase Realtime for trace updates with a polling fallback
 
 - **Decision**: Design the job detail page around `job_trace_events` subscriptions via Supabase Realtime when available, with a polling data source that reuses the same UI state model.
 - **Rationale**: The job detail page is the most important screen and benefits from live trace updates. A fallback path is necessary because Realtime rollout or environment setup may lag behind the rest of the product.
@@ -64,15 +80,7 @@
   - Polling only: rejected because the product should feel live and trace-forward.
   - Realtime-only with no fallback: rejected because it would create unnecessary fragility in local development and early deployment environments.
 
-## Decision 9: Model settlement explicitly, even with mocked execution
-
-- **Decision**: Represent `payments`, `settlements`, `payouts`, and `integration_references` as first-class records in Supabase and drive approval-gated settlement through the KeeperHub adapter, even when the adapter is mocked.
-- **Rationale**: Settlement transparency is a product requirement, not a later integration detail. The data model and UI must already reflect fee splitting, payout status, and execution references.
-- **Alternatives considered**:
-  - Treating payment as a single status field on `jobs`: rejected because it cannot model authorization, settlement, fee splits, and payout lifecycle cleanly.
-  - Deferring settlement modeling until real payments are integrated: rejected because it would distort the core product flow.
-
-## Decision 10: Support planning on `main` by feature directory, not only by branch name
+## Decision 11: Support planning on `main` by feature directory, not only by branch name
 
 - **Decision**: Allow the local Speckit planning scripts to proceed on `main` when `.specify/feature.json` identifies the active feature directory.
 - **Rationale**: The working preference for this repository is to stay on `main`, while Speckit still needs a concrete feature directory to populate. The persisted feature directory already provides that context.
