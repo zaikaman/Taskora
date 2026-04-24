@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "strict": true,
+    "noImplicitOverride": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "paths": {
+      "@taskora/core": ["packages/core/src/index.ts"],
+      "@taskora/core/*": ["packages/core/src/*"],
+      "@taskora/supabase": ["packages/supabase/src/index.ts"],
+      "@taskora/supabase/*": ["packages/supabase/src/*"],
+      "@taskora/agent-sdk": ["packages/agent-sdk/src/index.ts"],
+      "@taskora/agent-sdk/*": ["packages/agent-sdk/src/*"],
+      "@taskora/og": ["packages/og/src/index.ts"],
+      "@taskora/og/*": ["packages/og/src/*"],
+      "@taskora/gensyn": ["packages/gensyn/src/index.ts"],
+      "@taskora/gensyn/*": ["packages/gensyn/src/*"],
+      "@taskora/keeperhub": ["packages/keeperhub/src/index.ts"],
+      "@taskora/keeperhub/*": ["packages/keeperhub/src/*"],
+      "@taskora/ui": ["packages/ui/src/index.ts"],
+      "@taskora/ui/*": ["packages/ui/src/*"]
+    }
+  }
+}

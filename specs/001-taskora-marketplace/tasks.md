@@ -17,15 +17,15 @@
 
 **Purpose**: Initialize the TypeScript monorepo, shared tooling, and baseline app structure
 
-- [ ] T001 Create the pnpm workspace and Turborepo root configuration in `package.json`, `pnpm-workspace.yaml`, and `turbo.json`
-- [ ] T002 Create the web app workspace scaffold in `apps/web/package.json`, `apps/web/tsconfig.json`, and `apps/web/next.config.ts`
-- [ ] T003 Create the agent runtime workspace scaffold in `apps/agent-runtime/package.json`, `apps/agent-runtime/tsconfig.json`, and `apps/agent-runtime/src/index.ts`
-- [ ] T004 [P] Create shared package scaffolds in `packages/core/package.json`, `packages/supabase/package.json`, `packages/agent-sdk/package.json`, `packages/og/package.json`, `packages/gensyn/package.json`, `packages/keeperhub/package.json`, and `packages/ui/package.json`
-- [ ] T005 [P] Configure TypeScript project references and shared compiler options in `tsconfig.base.json` and workspace `tsconfig.json` files
-- [ ] T006 [P] Configure linting, formatting, and static analysis in `eslint.config.js`, `.prettierrc`, and `.editorconfig`
-- [ ] T007 [P] Configure test runners and coverage defaults in `vitest.config.ts`, `playwright.config.ts`, and `tests/setup/env.ts`
-- [ ] T008 [P] Create environment variable templates in `.env.example`, `apps/web/.env.example`, and `apps/agent-runtime/.env.example`
-- [ ] T009 [P] Add baseline CI quality gates in `.github/workflows/ci.yml`
+- [x] T001 Create the pnpm workspace and Turborepo root configuration in `package.json`, `pnpm-workspace.yaml`, and `turbo.json`
+- [x] T002 Create the web app workspace scaffold in `apps/web/package.json`, `apps/web/tsconfig.json`, and `apps/web/next.config.ts`
+- [x] T003 Create the agent runtime workspace scaffold in `apps/agent-runtime/package.json`, `apps/agent-runtime/tsconfig.json`, and `apps/agent-runtime/src/index.ts`
+- [x] T004 [P] Create shared package scaffolds in `packages/core/package.json`, `packages/supabase/package.json`, `packages/agent-sdk/package.json`, `packages/og/package.json`, `packages/gensyn/package.json`, `packages/keeperhub/package.json`, and `packages/ui/package.json`
+- [x] T005 [P] Configure TypeScript project references and shared compiler options in `tsconfig.base.json` and workspace `tsconfig.json` files
+- [x] T006 [P] Configure linting, formatting, and static analysis in `eslint.config.js`, `.prettierrc`, and `.editorconfig`
+- [x] T007 [P] Configure test runners and coverage defaults in `vitest.config.ts`, `playwright.config.ts`, and `tests/setup/env.ts`
+- [x] T008 [P] Create environment variable templates in `.env.example`, `apps/web/.env.example`, and `apps/agent-runtime/.env.example`
+- [x] T009 [P] Add baseline CI quality gates in `.github/workflows/ci.yml`
 
 ---
 

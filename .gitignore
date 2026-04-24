@@ -1,0 +1,13 @@
+node_modules/
+.turbo/
+coverage/
+dist/
+.next/
+test-results/
+playwright-report/
+.env
+.env.local
+apps/web/.env
+apps/web/.env.local
+apps/agent-runtime/.env
+apps/agent-runtime/.env.local

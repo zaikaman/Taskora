@@ -1,0 +1,32 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./apps/web"
+    },
+    {
+      "path": "./apps/agent-runtime"
+    },
+    {
+      "path": "./packages/core"
+    },
+    {
+      "path": "./packages/supabase"
+    },
+    {
+      "path": "./packages/agent-sdk"
+    },
+    {
+      "path": "./packages/og"
+    },
+    {
+      "path": "./packages/gensyn"
+    },
+    {
+      "path": "./packages/keeperhub"
+    },
+    {
+      "path": "./packages/ui"
+    }
+  ]
+}
