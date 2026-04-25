@@ -718,7 +718,7 @@ export default function Home() {
                   </div>
                   <div className="flex items-center gap-2">
                     <a
-                      href="https://twitter.com/Taskoraio"
+                      href="https://x.com/TaskoraOfficial"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="p-2.5 text-gray-400 hover:text-white hover:bg-white/10 rounded-xl transition-all"

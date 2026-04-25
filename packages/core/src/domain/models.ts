@@ -35,6 +35,17 @@ export type IntegrationReference = z.infer<typeof integrationReferenceSchema>;
 export type TraceEvent = z.infer<typeof traceEventSchema>;
 export type ReviewDecisionRecord = z.infer<typeof reviewDecisionRecordSchema>;
 
+export interface WorkforceMatch {
+  workforce: WorkforceSummary;
+  specializationFitScore: number;
+  priceScore: number;
+  availabilityScore: number;
+  totalScore: number;
+  rankingReason: string;
+  acceptedJobTypes: string[];
+  rejectedJobTypes: string[];
+}
+
 export interface JobSummaryDto {
   id: string;
   customerId: string;
@@ -54,6 +65,7 @@ export interface JobSummaryDto {
 
 export interface JobDetailDto extends JobSummaryDto {
   classification?: JobClassification;
+  matches?: WorkforceMatch[];
   payment?: PaymentDetail;
   trace?: TraceEvent[];
 }

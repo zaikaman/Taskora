@@ -1,6 +1,16 @@
-import { jobCreateSchema, mapJobRecord, type JobCreateInput, type JobSummaryDto } from "@taskora/core";
+import {
+  jobCreateSchema,
+  mapJobDetailRecord,
+  mapJobRecord,
+  type JobCreateInput,
+  type JobDetailDto,
+  type JobSummaryDto
+} from "@taskora/core";
+import type { Database } from "../types/database.js";
 import type { JobRow, TableInsert } from "../types/index.js";
 import { ensureData, resolveViewerId, type TaskoraSupabaseClient } from "./common.js";
+import { getJobClassification } from "./job-classifications.js";
+import { getLatestPaymentForJob } from "./payments.js";
 
 export async function createJobForCustomer(
   client: TaskoraSupabaseClient,
@@ -78,4 +88,40 @@ export async function selectWorkforceForJob(
   const row = ensureData(response.data as JobRow | null, response.error, "Job update failed.");
 
   return mapJobRecord(row);
+}
+
+export async function updateJobStatus(
+  client: TaskoraSupabaseClient,
+  input: { jobId: string; status: Database["public"]["Enums"]["job_status"] },
+  viewerId?: string
+): Promise<JobSummaryDto> {
+  const customerId = await resolveViewerId(client, viewerId);
+  const response = await client
+    .from<JobRow>("jobs")
+    .update({
+      status: input.status,
+      updated_at: new Date().toISOString()
+    })
+    .eq("id", input.jobId)
+    .eq("customer_id", customerId)
+    .select("*")
+    .single();
+  const row = ensureData(response.data as JobRow | null, response.error, "Job status update failed.");
+
+  return mapJobRecord(row);
+}
+
+export async function getJobDetailForCustomer(
+  client: TaskoraSupabaseClient,
+  jobId: string,
+  viewerId?: string
+): Promise<JobDetailDto> {
+  const job = await getJobForCustomer(client, jobId, viewerId);
+  const classification = await getJobClassification(client, job.id);
+  const payment = await getLatestPaymentForJob(client, job.id);
+
+  return mapJobDetailRecord(job, {
+    ...(classification ? { classification } : {}),
+    ...(payment ? { payment } : {})
+  });
 }

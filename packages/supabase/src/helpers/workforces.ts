@@ -1,6 +1,15 @@
-import { mapWorkforceRecord, type WorkforceSummary, workforceSummarySchema } from "@taskora/core";
+import {
+  rankWorkforcesForJob,
+  mapWorkforceRecord,
+  workforceManifestSchema,
+  type JobClassification,
+  type WorkforceMatch,
+  type WorkforceSummary,
+  workforceSummarySchema,
+  type MatchableWorkforce
+} from "@taskora/core";
 import type { Json } from "../types/database.js";
-import type { TableInsert, WorkforceRow } from "../types/index.js";
+import type { TableInsert, WorkforceManifestRow, WorkforceRow } from "../types/index.js";
 import { ensureData, resolveViewerId, type TaskoraSupabaseClient } from "./common.js";
 
 export interface CreateWorkforceInput {
@@ -88,4 +97,65 @@ export async function getWorkforceById(
   }
 
   return workforceSummarySchema.parse(mapWorkforceRecord(row));
+}
+
+export async function listRankedWorkforceMatches(
+  client: TaskoraSupabaseClient,
+  classification: JobClassification
+): Promise<WorkforceMatch[]> {
+  const filters =
+    classification.category === "general"
+      ? {}
+      : {
+          category: classification.category
+        };
+  const workforces = await listAvailableWorkforces(client, filters);
+  const candidates: MatchableWorkforce[] = [];
+
+  for (const workforce of workforces) {
+    const manifest = await getLatestWorkforceManifest(client, workforce.id);
+
+    if (!manifest) {
+      continue;
+    }
+
+    candidates.push({
+      ...workforce,
+      acceptedJobTypes: manifest.acceptedJobTypes,
+      rejectedJobTypes: manifest.rejectedJobTypes
+    });
+  }
+
+  return rankWorkforcesForJob(classification, candidates).matches;
+}
+
+export async function getLatestWorkforceManifest(
+  client: TaskoraSupabaseClient,
+  workforceId: string
+): Promise<{
+  acceptedJobTypes: string[];
+  rejectedJobTypes: string[];
+} | null> {
+  const response = await client
+    .from<WorkforceManifestRow>("workforce_manifests")
+    .select("*")
+    .eq("workforce_id", workforceId)
+    .order("version", { ascending: false });
+  const rows = ensureData(
+    (response.data ?? []) as WorkforceManifestRow[],
+    response.error,
+    "Workforce manifests not found."
+  );
+  const latest = rows[0];
+
+  if (!latest) {
+    return null;
+  }
+
+  const manifest = workforceManifestSchema.parse(latest.manifest_json);
+
+  return {
+    acceptedJobTypes: manifest.acceptedJobTypes,
+    rejectedJobTypes: manifest.rejectedJobTypes
+  };
 }

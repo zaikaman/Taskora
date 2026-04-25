@@ -1,6 +1,7 @@
 import { createHash, randomUUID } from "node:crypto";
 import type {
   JobDetailDto,
+  JobClassification,
   JobSummaryDto,
   PaymentDetail,
   ProfileDto,
@@ -9,6 +10,7 @@ import type {
   WorkforceSummary
 } from "./models.js";
 import {
+  jobClassificationSchema,
   paymentDetailSchema,
   profileSchema,
   traceEventSchema,
@@ -100,6 +102,33 @@ export function mapJobRecord(record: {
     updatedAt: record.updated_at,
     completedAt: record.completed_at
   };
+}
+
+export function mapJobClassificationRecord(record: {
+  job_id: string;
+  category: string;
+  job_type: string;
+  risk_level: "low" | "medium" | "high";
+  required_capabilities: string[];
+  budget_fit: string;
+  matching_explanation: unknown;
+  classifier_version: string;
+  created_at?: string;
+}): JobClassification {
+  return jobClassificationSchema.parse({
+    jobId: record.job_id,
+    category: record.category,
+    jobType: record.job_type,
+    riskLevel: record.risk_level,
+    requiredCapabilities: record.required_capabilities,
+    budgetFit: record.budget_fit,
+    matchingExplanation:
+      typeof record.matching_explanation === "object" && record.matching_explanation !== null
+        ? record.matching_explanation
+        : {},
+    classifierVersion: record.classifier_version,
+    createdAt: record.created_at
+  });
 }
 
 export function mapPaymentRecord(record: {

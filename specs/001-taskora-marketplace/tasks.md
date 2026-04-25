@@ -68,20 +68,20 @@
 
 ### Tests for User Story 1 (REQUIRED)
 
-- [ ] T030 [P] [US1] Add unit tests for deterministic classification and ranking in `tests/unit/job-classification.test.ts`
-- [ ] T031 [P] [US1] Add contract tests for jobs and payment authorization APIs in `tests/contract/control-plane-jobs.test.ts`
-- [ ] T032 [P] [US1] Add integration coverage for posting and matching flows in `tests/integration/job-posting-and-matching.test.ts`
+- [x] T030 [P] [US1] Add unit tests for deterministic classification and ranking in `tests/unit/job-classification.test.ts`
+- [x] T031 [P] [US1] Add contract tests for jobs and payment authorization APIs in `tests/contract/control-plane-jobs.test.ts`
+- [x] T032 [P] [US1] Add integration coverage for posting and matching flows in `tests/integration/job-posting-and-matching.test.ts`
 - [ ] T033 [P] [US1] Add end-to-end coverage for the buyer MVP journey in `tests/e2e/buyer-post-job.spec.ts`
 
 ### Implementation for User Story 1
 
-- [ ] T034 [P] [US1] Implement deterministic classification logic in `packages/core/src/classification/classifier.ts`
-- [ ] T035 [P] [US1] Implement workforce compatibility and ranking logic in `packages/core/src/matching/matcher.ts`
-- [ ] T036 [P] [US1] Implement job and classification repositories in `packages/supabase/src/helpers/jobs.ts` and `packages/supabase/src/helpers/job-classifications.ts`
-- [ ] T037 [P] [US1] Implement workforce query and ranking repositories in `packages/supabase/src/helpers/workforces.ts`
-- [ ] T038 [US1] Implement the `POST /api/jobs` route in `apps/web/app/api/jobs/route.ts`
-- [ ] T039 [US1] Implement the `GET /api/jobs` and `GET /api/jobs/[jobId]` routes in `apps/web/app/api/jobs/route.ts` and `apps/web/app/api/jobs/[jobId]/route.ts`
-- [ ] T040 [US1] Implement the `POST /api/payments/authorize` and `GET /api/payments/[paymentId]` routes in `apps/web/app/api/payments/authorize/route.ts` and `apps/web/app/api/payments/[paymentId]/route.ts`
+- [x] T034 [P] [US1] Implement deterministic classification logic in `packages/core/src/classification/classifier.ts`
+- [x] T035 [P] [US1] Implement workforce compatibility and ranking logic in `packages/core/src/matching/matcher.ts`
+- [x] T036 [P] [US1] Implement job and classification repositories in `packages/supabase/src/helpers/jobs.ts` and `packages/supabase/src/helpers/job-classifications.ts`
+- [x] T037 [P] [US1] Implement workforce query and ranking repositories in `packages/supabase/src/helpers/workforces.ts`
+- [x] T038 [US1] Implement the `POST /api/jobs` route in `apps/web/app/api/jobs/route.ts`
+- [x] T039 [US1] Implement the `GET /api/jobs` and `GET /api/jobs/[jobId]` routes in `apps/web/app/api/jobs/route.ts` and `apps/web/app/api/jobs/[jobId]/route.ts`
+- [x] T040 [US1] Implement the `POST /api/payments/authorize` and `GET /api/payments/[paymentId]` routes in `apps/web/app/api/payments/authorize/route.ts` and `apps/web/app/api/payments/[paymentId]/route.ts`
 - [ ] T041 [P] [US1] Build the landing page and top-level marketplace navigation in `apps/web/app/page.tsx` and `apps/web/components/marketing/hero.tsx`
 - [ ] T042 [P] [US1] Build the human job posting form in `apps/web/app/(app)/jobs/new/page.tsx` and `apps/web/components/jobs/job-post-form.tsx`
 - [ ] T043 [P] [US1] Build the workforce matching list and comparison UI in `apps/web/app/(app)/jobs/[jobId]/matches/page.tsx` and `apps/web/components/workforces/workforce-match-list.tsx`
