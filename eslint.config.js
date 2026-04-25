@@ -9,7 +9,8 @@ export default tseslint.config(
       "**/.next/**",
       "**/coverage/**",
       "**/node_modules/**",
-      "supabase/**"
+      "supabase/**",
+      "**/next-env.d.ts"
     ]
   },
   js.configs.recommended,
