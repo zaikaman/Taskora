@@ -3,9 +3,10 @@ import { Navigation } from "./navigation";
 
 export interface AppShellProps {
     children: ReactNode;
+    headerActions?: ReactNode;
 }
 
-export function AppShell({ children }: AppShellProps) {
+export function AppShell({ children, headerActions }: AppShellProps) {
     return (
         <div className="min-h-screen flex flex-col relative bg-[#050505] text-white font-sans overflow-hidden">
             <div className="fixed inset-0 pointer-events-none z-0">
@@ -15,7 +16,7 @@ export function AppShell({ children }: AppShellProps) {
             </div>
 
             <div className="relative z-10 flex flex-col min-h-screen">
-                <Navigation />
+                <Navigation headerActions={headerActions} />
                 <main className="flex-1 w-full mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl pt-32 pb-16 relative">
                     <div className="absolute top-32 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#14B8A6]/20 to-transparent"></div>
                     {children}

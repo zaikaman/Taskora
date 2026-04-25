@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { PrivyAuthButton } from "../components/privy-auth-button";
 
 const placeholders = [
   "Research the latest DeFi trends...",
@@ -94,12 +95,7 @@ export default function Home() {
                     </a>
                   </nav>
                   <div className="flex items-center gap-3 justify-end col-start-3">
-                    <button
-                      disabled
-                      className="flex items-center px-4 py-1.5 rounded-full bg-white/5 border border-white/5 text-sm text-gray-500 font-medium cursor-not-allowed"
-                    >
-                      Sign in
-                    </button>
+                    <PrivyAuthButton variant="hero" />
                     <button
                       className="md:hidden p-2 text-gray-400 hover:text-white transition-colors"
                       aria-label="Toggle menu"

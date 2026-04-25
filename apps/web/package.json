@@ -4,13 +4,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "node ../../scripts/run-with-root-env.mjs next dev",
+    "build": "node ../../scripts/run-with-root-env.mjs next build",
+    "start": "node ../../scripts/run-with-root-env.mjs next start",
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc -b tsconfig.json"
   },
   "dependencies": {
+    "@farcaster/mini-app-solana": "^1.0.0",
+    "@privy-io/react-auth": "^3.22.2",
     "@taskora/core": "workspace:*",
     "@taskora/supabase": "workspace:*",
     "@taskora/ui": "workspace:*",

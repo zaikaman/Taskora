@@ -8,18 +8,18 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev --parallel",
+    "build": "node ./scripts/run-with-root-env.mjs turbo run build",
+    "dev": "node ./scripts/run-with-root-env.mjs turbo run dev --parallel",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
-    "test": "vitest run --passWithNoTests",
-    "test:unit": "vitest run tests/unit --passWithNoTests",
-    "test:integration": "vitest run tests/integration --passWithNoTests",
-    "test:contract": "vitest run tests/contract --passWithNoTests",
-    "test:e2e": "playwright test --pass-with-no-tests",
+    "test": "node ./scripts/run-with-root-env.mjs vitest run --passWithNoTests",
+    "test:unit": "node ./scripts/run-with-root-env.mjs vitest run tests/unit --passWithNoTests",
+    "test:integration": "node ./scripts/run-with-root-env.mjs vitest run tests/integration --passWithNoTests",
+    "test:contract": "node ./scripts/run-with-root-env.mjs vitest run tests/contract --passWithNoTests",
+    "test:e2e": "node ./scripts/run-with-root-env.mjs playwright test --pass-with-no-tests",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "supabase:types": "supabase gen types typescript --local > packages/supabase/src/types/database.ts"
+    "supabase:types": "node ./scripts/run-with-root-env.mjs supabase gen types typescript --local > packages/supabase/src/types/database.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
