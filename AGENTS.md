@@ -1,0 +1,1 @@
+- Remember to run lint and run build when you're done and fix all the errors and warnings if there are any.
