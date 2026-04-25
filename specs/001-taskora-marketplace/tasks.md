@@ -49,12 +49,12 @@
 - [x] T021 [P] Implement mock provider adapters in `packages/og/src/mock/mock-og-adapter.ts`, `packages/gensyn/src/mock/mock-gensyn-adapter.ts`, and `packages/keeperhub/src/mock/mock-keeperhub-adapter.ts`
 - [x] T022 [P] Implement runtime integration factory wiring in `apps/agent-runtime/src/integrations/factory.ts`
 - [x] T023 Implement shared auth, profile, and RLS-aware repository helpers in `packages/supabase/src/helpers/profiles.ts`, `packages/supabase/src/helpers/jobs.ts`, and `packages/supabase/src/helpers/workforces.ts`
-- [ ] T024 [P] Implement shared UI shell, navigation, and state components in `packages/ui/src/components/app-shell.tsx`, `packages/ui/src/components/page-state.tsx`, and `packages/ui/src/components/navigation.tsx`
-- [ ] T025 [P] Implement web app auth bootstrap and route guards in `apps/web/lib/auth.ts`, `apps/web/middleware.ts`, and `apps/web/app/(app)/layout.tsx`
+- [x] T024 [P] Implement shared UI shell, navigation, and state components in `packages/ui/src/components/app-shell.tsx`, `packages/ui/src/components/page-state.tsx`, and `packages/ui/src/components/navigation.tsx`
+- [x] T025 [P] Implement web app auth bootstrap and route guards in `apps/web/lib/auth.ts`, `apps/web/middleware.ts`, and `apps/web/app/(app)/layout.tsx`
 - [x] T026 [P] Configure shared logging, error serialization, and request tracing in `packages/core/src/observability/logger.ts`, `packages/core/src/observability/errors.ts`, and `apps/agent-runtime/src/services/request-context.ts`
 - [x] T027 [P] Create foundational unit coverage for schemas, adapters, and permissions in `tests/unit/core-schemas.test.ts`, `tests/unit/provider-adapters.test.ts`, and `tests/unit/role-permissions.test.ts`
 - [x] T028 [P] Create migration and repository integration coverage in `tests/integration/supabase-schema.test.ts` and `tests/integration/supabase-helpers.test.ts`
-- [ ] T029 Define the shared UX state checklist and performance assertions in `apps/web/lib/ux-criteria.ts` and `tests/integration/performance-budgets.test.ts`
+- [x] T029 Define the shared UX state checklist and performance assertions in `apps/web/lib/ux-criteria.ts` and `tests/integration/performance-budgets.test.ts`
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 

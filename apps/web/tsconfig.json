@@ -3,11 +3,16 @@
   "compilerOptions": {
     "composite": true,
     "incremental": true,
+    "ignoreDeprecations": "5.0",
     "tsBuildInfoFile": "../../node_modules/.cache/tsconfig.web.tsbuildinfo",
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "jsx": "preserve",
-    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ES2022"
+    ],
     "allowJs": false,
     "plugins": [
       {
@@ -16,8 +21,15 @@
     ],
     "noEmit": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
   "references": [
     {
       "path": "../../packages/core"
